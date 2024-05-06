@@ -47,7 +47,7 @@ To run the information retrieval system, follow these steps:
 ## Usage
 
 * Clone the repository:
-git clone https://github.com/zohaibterminator/text-analysis-app.git
+git clone https://github.com/zohaibterminator/text-analysis.git
 
 * Install the required libraries:
 pip install -r requirements.txt
