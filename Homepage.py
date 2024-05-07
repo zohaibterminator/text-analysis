@@ -9,9 +9,9 @@ st.set_page_config(
 st.title("Text-Classifier and Text-Clustering")
 
 st.subheader("Welcome to the App!")
-st.markdown("This app is designed to demonstrate two text analysis techniques: Text Classification and Text Clustering")
-st.markdown("- Text Classification: This is a supervised learning technique that assigns a label to a text document. The labels can be binary, multi-class, or multi-label. The goal is to predict the label of a text document based on its content. The app uses the K-Nearest Neighbors algorithm to classify the text documents.")
-st.markdown("- Text Clustering: This is an unsupervised learning technique that groups similar text documents together. The goal is to discover the underlying structure in the text data. The app uses the K-Means algorithm to cluster the text documents.")
+st.markdown("This app is designed to demonstrate two text analysis techniques: Document Classification and Document Clustering")
+st.markdown("- Document Classification: Document classification involves categorizing documents into predefined classes or categories based on their content. This task is often supervised, meaning that the classification model is trained on labeled data, where each document is associated with its correct class or category. The app uses the K-Nearest Neighbors algorithm to classify the text documents.")
+st.markdown("- Document Clustering: Document clustering, on the other hand, is an unsupervised task where documents are grouped into clusters based on their similarity. Clustering algorithms identify natural groupings within the documents without any prior knowledge of class labels.")
 
 st.markdown('''
 <style>
