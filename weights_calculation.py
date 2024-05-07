@@ -156,6 +156,7 @@ def preprocessing():
         tokens = [stemmer.stem(c) for c in tokens if c.isalpha() and c not in stopwords and len(c) >= 2] # filter out any strings that contain symbols, numbers, etc.
         total_tokens.append(tokens) # add the processed tokens as a seperate list. Did this to keep track of which tokens appear in which docs (needed to construct indexes). List at index 0 indicate tokens found in doc 1 and so on.
 
+    print("Documents processed")
     return total_tokens
 
 
@@ -191,7 +192,7 @@ def save_weights():
     The calculate_TF function takes the tokens as input and returns a DataFrame where each row represent the TF weights for each term.
     The calculate_IDF function also takes the tokens as input and returns a DataFrame where each value represent the IDF weight for each term.
 
-    The output files 'tf-idf.csv' and 'idf.csv' contain the comma seperated values of the term frequency and inverse document frequency weights for each term.
+    The output files 'tf-idf.csv' contain the comma seperated values of the TF-IDF weights for each term.
     """
 
     tokens = preprocessing() # preprocessing function is called, returns the processed tokens
@@ -201,9 +202,6 @@ def save_weights():
 
     tf_idf.to_csv('tf-idf.csv') # output TF-IDF DataFrame to CSV including the index
     print("TF-IDF Weights saved")
-
-    idf.to_csv('idf.csv') # output IDF DataFrame to CSV including the index
-    print("Inverse Document Frequency Weights saved")
 
 
 def main():
