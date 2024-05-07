@@ -1,12 +1,12 @@
-# Text Classifier and Text Clustering
+# Document Classifier and Document Clustering
 
-This repository contains Python code for a text analysis application that demonstrates two text analysis techniques: Text Classification and Text Clustering. It uses the data in the ResearchPapers directory and calculates the TF and IDF values to make the TF-IDF vectors embeddings of the documents. This TF-IDF vector embeddings is then used for both Text Classification and Text Clustering tasks.
+This repository contains Python code for a text analysis application that demonstrates two text analysis techniques: Document Classification and Document Clustering. It uses the data in the ResearchPapers directory and calculates the TF and IDF values to make the TF-IDF vectors embeddings of the documents. This TF-IDF vector embeddings is then used for both Document Classification and Document Clustering tasks.
 
 ## Overview
 
-- **Text Classification**: This is a supervised learning technique that assigns a label to a text document. The labels can be binary, multi-class, or multi-label. The app uses the K-Nearest Neighbors algorithm to classify the text documents.
+- **Document Classification**: This is a supervised learning technique that assigns a label to a text document. The labels can be binary, multi-class, or multi-label. The app uses the K-Nearest Neighbors algorithm to classify the text documents.
 
-- **Text Clustering**: This is an unsupervised learning technique that groups similar text documents together. The goal is to discover the underlying structure in the text data. The app uses the K-Means algorithm to cluster the text documents.
+- **Document Clustering**: This is an unsupervised learning technique that groups similar text documents together. The goal is to discover the underlying structure in the text data. The app uses the K-Means algorithm to cluster the text documents.
 
 ## Components
 
@@ -17,18 +17,18 @@ This repository contains Python code for a text analysis application that demons
 
 ### 2. Homepage
 
-- **File**: `homepage.py`
+- **File**: `Homepage.py`
 - **Description**: This script sets up the homepage of the application using Streamlit. It provides an overview of the app and its functionalities.
 
-### 3. Text Classification
+### 3. Document Classification
 
-- **File**: `text_classification.py`
-- **Description**: This script implements the text classification functionality of the application. It trains a K-Nearest Neighbors model using TF-IDF weights and evaluates the model using accuracy, recall, F1-score, and precision metrics.
+- **File**: `Document_Classification.py`
+- **Description**: This script implements the document classification functionality of the application. It trains a K-Nearest Neighbors model using TF-IDF weights and evaluates the model using accuracy, recall, F1-score, and precision metrics.
 
-### 4. Text Clustering
+### 4. Document Clustering
 
-- **File**: `text_clustering.py`
-- **Description**: This script implements the text clustering functionality of the application. It trains a K-Means clustering model using TF-IDF weights and evaluates the model using purity, silhouette score, and adjusted Rand index metrics. It also generates an Elbow Chart and displays the top keywords for each cluster.
+- **File**: `Document_Clustering.py`
+- **Description**: This script implements the document clustering functionality of the application. It trains a K-Means clustering model using TF-IDF weights and evaluates the model using purity, silhouette score, and adjusted Rand index metrics. It also generates an Elbow Chart and displays the top keywords for each cluster.
 
 ## Getting Started
 To run the information retrieval system, follow these steps:
