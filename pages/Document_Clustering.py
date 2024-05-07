@@ -7,14 +7,8 @@ from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.metrics.cluster import contingency_matrix
 from sklearn.metrics import silhouette_score, adjusted_rand_score
-from pages.Text_Classification import extract_weights, add_labels
+from pages.Document_Classification import extract_weights, add_labels
 pio.templates.default = 'ggplot2'
-
-
-st.set_page_config(
-    page_title="Document Clustering",
-    page_icon="📚",
-)
 
 
 def plot_cluster(df, k):
@@ -59,7 +53,7 @@ def model_train(df, n_clusters=5):
         n_clusters (int): The number of clusters. Default is 19.
     """
 
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42) # initialize KMeans model
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42, init='k-means++') # initialize KMeans model
     y_predict = kmeans.fit_predict(df) # fit and predict the model
     df['cluster'] = y_predict # add cluster column to the DataFrame
     return kmeans, df, y_predict # return the model, DataFrame, and predicted values
