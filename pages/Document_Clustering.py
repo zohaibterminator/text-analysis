@@ -11,6 +11,12 @@ from pages.Text_Classification import extract_weights, add_labels
 pio.templates.default = 'ggplot2'
 
 
+st.set_page_config(
+    page_title="Document Clustering",
+    page_icon="📚",
+)
+
+
 def plot_cluster(df, k):
     """
 

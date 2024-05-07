@@ -6,6 +6,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
 
 
+st.set_page_config(
+    page_title="Document Classification",
+    page_icon="📚",
+)
+
+
 def extract_weights():
     """
     This function is used to extract the TF-IDF and the IDF weights from their respective csv files.
