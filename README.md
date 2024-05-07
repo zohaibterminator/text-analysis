@@ -63,6 +63,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-* This project was inspired by information retrieval concepts and machine learning algorithms.
+* This project was inspired by information retrieval and machine learning concepts.
 * Special thanks to the developers of NLTK for providing essential natural language processing tools.
 * Special thanks to developers of Streamlit that was used to develop the GUI of the app.
