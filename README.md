@@ -34,9 +34,8 @@ This repository contains Python code for a text analysis application that demons
 To run the information retrieval system, follow these steps:
 
 * Ensure you have Python 3.12 installed.
-* Install NLTK and tkinter 'pip install NLTK' and 'pip install tkinter' repectively.
+* Install all the dependencies by running "pip install -r requirements.txt" in the terminal.
 * Make sure Stopword-List.txt and the Research Paper directory containing all the documents is in your current working directory.
-* Put the files Text_Classification and Text_Clustering in the "pages" directory
 * Run the files in an IDE.
 * Run this command to download the tokennizer nltk.download('punkt')
 * Run the 'weights_calculation.py' script first using 'python weights_calculation.py' to create and save the weights.
