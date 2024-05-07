@@ -6,3 +6,4 @@ nltk
 streamlit
 scipy
 porter
+plotly
