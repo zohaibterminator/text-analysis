@@ -50,7 +50,7 @@ def plot_cluster(df, k):
     st.plotly_chart(fig)
 
 
-def model_train(df, n_clusters=19):
+def model_train(df, n_clusters=5):
     """
     This function is used to train the model.
 
@@ -129,7 +129,7 @@ def main():
 
     """
     if "n_clusters" not in st.session_state: # check if the number of clusters is in the session state
-        st.session_state["n_clusters"] = 19 # if not, set the default number of clusters to 19
+        st.session_state["n_clusters"] = 5 # if not, set the default number of clusters to 5
     if "iterr" not in st.session_state: # check if the range is in the session state
         st.session_state["iterr"] = range(2, 12, 2) # if not, set the default range to 2, 12, 2
     if "sse" not in st.session_state: # check if the SSE is in the session state
@@ -150,10 +150,10 @@ def main():
             st.subheader(f"{key}:") 
             st.write(f"{value}")
 
-    st.header("\nElbow Chart:") # create a header for the Elbow Chart
+    st.header("Elbow Chart:") # create a header for the Elbow Chart
     plot_cluster(df, int(n_clusters)) # plot the Elbow Chart
 
-    top_k = st.text_input("\nEnter the number of top keywords you want to see from each cluster:", st.session_state["top_k"]) # get the number of top keywords
+    top_k = st.text_input("Enter the number of top keywords you want to see from each cluster:", st.session_state["top_k"]) # get the number of top keywords
     submit = st.button("Submit the number") # create a submit button
 
     st.header("Top Keywords:") # create a header for the Top Keywords
