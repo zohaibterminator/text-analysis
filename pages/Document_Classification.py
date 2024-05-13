@@ -4,6 +4,7 @@ import streamlit as st
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
+import time
 
 
 def extract_weights():
@@ -70,9 +71,12 @@ def model_train(tf_idf, n_neighbors=5):
 
     # train the model
     model = KNeighborsClassifier(n_neighbors=int(n_neighbors)) # create a KNN model
-    model.fit(X_train, y_train) # train the model
 
-    return model, X_test, y_test
+    start_time = time.time() # start the timer
+    model.fit(X_train, y_train) # train the model
+    end_time = time.time() # end the timer
+
+    return model, X_test, y_test, end_time - start_time # return the trained model, the testing data, and the testing labels
 
 
 def eval_metric(model, X_test, y_test):
@@ -88,7 +92,9 @@ def eval_metric(model, X_test, y_test):
         metric (Dict): A dictionary containing the evaluation metrics.
     """
 
+    start_time = time.time() # start the timer
     y_pred = model.predict(X_test) # test the model
+    end_time = time.time() # end the timer
 
     metric = {} # initialize a dictionary to store the metrics
 
@@ -98,7 +104,7 @@ def eval_metric(model, X_test, y_test):
     metric['F1-score'] = f1_score(y_test, y_pred, average='weighted') # compute F1-score
     metric['Precision'] = precision_score(y_test, y_pred, average='weighted') # compute precision
 
-    return metric # return the metrics
+    return metric, end_time-start_time # return the metrics
 
 
 def main():
@@ -116,13 +122,16 @@ def main():
     df = extract_weights() # extract the TF-IDF weights
     df = add_labels(df) # add the labels to the DataFrame
 
-    model, X_test, y_test = model_train(df, n_neighbors) # train the model based on the number of neighbors given by the user
-    metrics = eval_metric(model, X_test, y_test) # evaluate the model
+    model, X_test, y_test, model_training_time = model_train(df, n_neighbors) # train the model based on the number of neighbors given by the user
+    metrics, model_eval_time = eval_metric(model, X_test, y_test) # evaluate the model
 
     for key, value in metrics.items(): # loop through the metrics
         with st.container(): # create a container containing the metrics and their values
             st.subheader(f"{key}:")
             st.write(f"{value}")
+
+    st.subheader("Model Time:")
+    st.write(f"{model_training_time + model_eval_time} seconds") # display the model training time
 
 
 if __name__ == "__main__":

@@ -4,9 +4,8 @@ import streamlit as st
 import plotly.io as pio
 import plotly.express as px
 from sklearn.cluster import KMeans
-from sklearn.model_selection import train_test_split
 from sklearn.metrics.cluster import contingency_matrix
-from sklearn.metrics import silhouette_score, adjusted_rand_score
+from sklearn.metrics import silhouette_score, rand_score
 from pages.Document_Classification import extract_weights, add_labels
 pio.templates.default = 'ggplot2'
 
@@ -18,30 +17,27 @@ def plot_cluster(df, k):
 
     """
 
-    if k % 2 != 0:
-        k += 1
-
     if k < 2:
-        k = 2
-    
-    if k+10 > 22:
-        max_k = 22
-    else:
+        k = 2 # if k is less than 2, set k to 2
+
+    if k+10 > 21: # if k+10 is greater than 21, set max_k to 21 (max 21 clusters are allowed)
+        max_k = 21
+    else: # otherwise, set max_k to k+10 (for elbow chart)
         max_k = k+10
 
-    sse = []
-    iterr = range(k, max_k, 2)
+    sse = [] # initialize an empty list to store the SSE values
+    iterr = range(k, max_k, 1) # create a range of values from k to max_k
     for k in iterr:
-        kmeans = KMeans(n_clusters=k, random_state=42)
-        kmeans.fit(df)
-        sse.append(kmeans.inertia_)
+        kmeans = KMeans(n_clusters=k, random_state=42) # initialize KMeans model
+        kmeans.fit(df) # fit the model
+        sse.append(kmeans.inertia_) # append the SSE value to the list
     
-    df = pd.DataFrame()
-    df['Number of Clusters'] = list(iterr)
-    df['SSE'] = sse
+    df = pd.DataFrame() # create a DataFrame
+    df['Number of Clusters'] = list(iterr) # add the Number of Clusters to the DataFrame
+    df['SSE'] = sse # add the SSE values to the DataFrame
 
-    fig = px.line(df, x="Number of Clusters", y="SSE")
-    st.plotly_chart(fig)
+    fig = px.line(df, x="Number of Clusters", y="SSE") # create a line plot
+    st.plotly_chart(fig) # plot the line plot
 
 
 def model_train(df, n_clusters=5):
@@ -59,7 +55,7 @@ def model_train(df, n_clusters=5):
     return kmeans, df, y_predict # return the model, DataFrame, and predicted values
 
 
-def get_top_keywords(data, clusters, labels, n_terms=10):
+def get_top_keywords(data, clusters, labels, k_terms=10):
     """
     This function is used to get the top n keywords.
 
@@ -70,11 +66,11 @@ def get_top_keywords(data, clusters, labels, n_terms=10):
         n_terms (int): The number of terms to be returned. Default is 10.
     """
 
-    df = data.groupby(clusters).mean()
+    df = data.groupby(clusters).mean() # group the data by clusters and compute the mean
 
-    for i, r in df.iterrows():
-        st.subheader('Cluster {}'.format(i))
-        st.write(', '.join([labels[t] for t in np.argsort(r)[-n_terms:]]))
+    for i, r in df.iterrows(): # loop through the DataFrame
+        st.subheader('Cluster {}'.format(i)) # create a subheader for each cluster
+        st.write(', '.join([labels[t] for t in np.argsort(r)[-k_terms:]])) # display the top k terms (default 10)
 
 
 def purity_score(y_true, y_pred):
@@ -88,6 +84,7 @@ def purity_score(y_true, y_pred):
     Returns:
         purity (float): The purity score.
     """
+
     contingency = contingency_matrix(y_true, y_pred) # Compute contingency matrix
     cluster_purities = np.sum(np.max(contingency, axis=0)) # Sum of the maximum values in each cluster (cluster purity)
     total_samples = np.sum(contingency) # Total number of samples
@@ -106,6 +103,7 @@ def clust_metrics(df, y_predict):
     Returns:
         metrics (Dict): A dictionary containing the evaluation metrics.
     """
+
     metrics = {} # initialize a dictionary to store the metrics
 
     df = add_labels(df) # add the true labels to the DataFrame
@@ -113,7 +111,7 @@ def clust_metrics(df, y_predict):
     # print evaluation metrics
     metrics["Purity"] = purity_score(df['label'], y_predict) # compute purity score
     metrics["Silhouette Score"] = silhouette_score(df, y_predict) # evaluate clustering using silhouette score
-    metrics["Random Index"] = adjusted_rand_score(df['label'], y_predict) # compute random index
+    metrics["Random Index"] = rand_score(df['label'], y_predict) # compute random index
     return metrics
 
 
@@ -122,8 +120,9 @@ def main():
     This function is the main function that runs the app.
 
     """
+
     if "n_clusters" not in st.session_state: # check if the number of clusters is in the session state
-        st.session_state["n_clusters"] = 5 # if not, set the default number of clusters to 5
+        st.session_state["n_clusters"] = 8 # if not, set the default number of clusters to 8
     if "iterr" not in st.session_state: # check if the range is in the session state
         st.session_state["iterr"] = range(2, 12, 2) # if not, set the default range to 2, 12, 2
     if "sse" not in st.session_state: # check if the SSE is in the session state
