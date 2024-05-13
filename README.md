@@ -1,6 +1,6 @@
 # Document Classifier and Document Clustering
 
-This repository contains Python code for a text analysis application that demonstrates two text analysis techniques: Document Classification and Document Clustering. It uses the data in the ResearchPapers directory and calculates the TF and IDF values to make the TF-IDF vectors embeddings of the documents. This TF-IDF vector embeddings is then used for both Document Classification and Document Clustering tasks.
+This repository contains Python code for a text analysis application that demonstrates two text analysis techniques: Document Classification and Document Clustering. It uses the data in the ResearchPapers directory and calculates the TF and IDF values to make the TF-IDF scores of the documents. These TF-IDF scores is then used for both Document Classification and Document Clustering tasks.
 
 ## Overview
 
