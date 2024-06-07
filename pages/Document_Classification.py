@@ -1,10 +1,10 @@
+import time
 import numpy as np
 import pandas as pd
 import streamlit as st
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
-import time
 
 
 def extract_weights():
@@ -32,28 +32,27 @@ def add_labels(tf_idf):
         tf_idf (DataFrame): The TF-IDF DataFrame with labels.
     """
 
-    label1 = ['1', '2', '3', '7']
-    label2 = ['8', '9', '11']
-    label3 = ['12', '13', '14', '15', '16']
-    label4 = ['17', '18', '21']
-    label5 = ['22', '23', '24', '25', '26']
+    labels = []
 
     for index in tf_idf.index:
-        if index in label1:
-            tf_idf['label'] = 1
-        elif index in label2:
-            tf_idf['label'] = 2
-        elif index in label3:
-            tf_idf['label'] = 3
-        elif index in label4:
-            tf_idf['label'] = 4
-        elif index in label5:
-            tf_idf['label'] = 5
+        if index < 8:
+            labels.append(1)
+        elif index < 12:
+            labels.append(2)
+        elif index < 17:
+            labels.append(3)
+        elif index < 22:
+            labels.append(4)
+        else:
+            labels.append(5)
+
+    tf_idf['true_label'] = labels
+    tf_idf.to_csv('labelled.csv') # save the DataFrame to a CSV file
 
     return tf_idf
 
 
-def model_train(tf_idf, n_neighbors=5):
+def model_train(tf_idf, n_neighbors=6):
     """
     This function is used to train the model.
 
@@ -65,9 +64,10 @@ def model_train(tf_idf, n_neighbors=5):
     """
 
     # split the data into training and testing sets
-    y = tf_idf['label'].apply(int) # convert the labels to integers
-    X = tf_idf.drop('label', axis=1)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) # 80% training and 20% testing
+    y = tf_idf['true_label'].apply(int) # convert the labels to integers
+    X = tf_idf.drop('true_label', axis=1)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=42) # 70% training and 30% testing
 
     # train the model
     model = KNeighborsClassifier(n_neighbors=int(n_neighbors)) # create a KNN model
@@ -100,9 +100,9 @@ def eval_metric(model, X_test, y_test):
 
     # evaluate the model
     metric['Accuracy'] = accuracy_score(y_test, y_pred) # compute accuracy
-    metric['Recall'] = recall_score(y_test, y_pred, average='weighted') # compute recall
-    metric['F1-score'] = f1_score(y_test, y_pred, average='weighted') # compute F1-score
-    metric['Precision'] = precision_score(y_test, y_pred, average='weighted') # compute precision
+    metric['Recall'] = recall_score(y_test, y_pred, average='macro') # compute recall
+    metric['F1-score'] = f1_score(y_test, y_pred, average='macro') # compute F1-score
+    metric['Precision'] = precision_score(y_test, y_pred, average='macro') # compute precision
 
     return metric, end_time-start_time # return the metrics
 
@@ -114,7 +114,7 @@ def main():
     """
 
     if "n_neighbors" not in st.session_state: # check if the number of neighbors is in the session state
-        st.session_state["n_neighbors"] = 5 # if not, set the default number of neighbors to 5
+        st.session_state["n_neighbors"] = 6 # if not, set the default number of neighbors to 6
 
     n_neighbors = st.text_input("Enter the number of neighbors you want to set:", st.session_state["n_neighbors"]) # get the number of neighbors
     submit = st.button("Submit") # create a submit button
@@ -128,10 +128,10 @@ def main():
     for key, value in metrics.items(): # loop through the metrics
         with st.container(): # create a container containing the metrics and their values
             st.subheader(f"{key}:")
-            st.write(f"{value}")
+            st.write(f"{round(value, 3) * 100}%")
 
     st.subheader("Model Time:")
-    st.write(f"{model_training_time + model_eval_time} seconds") # display the model training time
+    st.write(f"{round(model_training_time + model_eval_time, 3)} sec") # display the model training time
 
 
 if __name__ == "__main__":

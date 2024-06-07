@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -40,37 +41,24 @@ def plot_cluster(df, k):
     st.plotly_chart(fig) # plot the line plot
 
 
-def model_train(df, n_clusters=5):
+def model_train(df, n_clusters=9):
     """
     This function is used to train the model.
 
     Args:
         df (DataFrame): The DataFrame.
-        n_clusters (int): The number of clusters. Default is 19.
+        n_clusters (int): The number of clusters. Default is 8.
     """
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=42, init='k-means++') # initialize KMeans model
+
+    start_time = time.time() # start the timer
     y_predict = kmeans.fit_predict(df) # fit and predict the model
+    end_time = time.time() # end the timer
+
     df['cluster'] = y_predict # add cluster column to the DataFrame
-    return kmeans, df, y_predict # return the model, DataFrame, and predicted values
 
-
-def get_top_keywords(data, clusters, labels, k_terms=10):
-    """
-    This function is used to get the top n keywords.
-
-    Args:
-        data (DataFrame): A Pandas DataFrame containing the TF-IDF values.
-        clusters (DataFrame): A single column DataFrame containing the predicted clusters.
-        labels (List): The list features of the dataframe.
-        n_terms (int): The number of terms to be returned. Default is 10.
-    """
-
-    df = data.groupby(clusters).mean() # group the data by clusters and compute the mean
-
-    for i, r in df.iterrows(): # loop through the DataFrame
-        st.subheader('Cluster {}'.format(i)) # create a subheader for each cluster
-        st.write(', '.join([labels[t] for t in np.argsort(r)[-k_terms:]])) # display the top k terms (default 10)
+    return kmeans, df, y_predict, end_time-start_time # return the model, DataFrame, predicted values, and model training time
 
 
 def purity_score(y_true, y_pred):
@@ -80,15 +68,15 @@ def purity_score(y_true, y_pred):
     Args:
         y_true (List): The true labels.
         y_pred (List): The predicted labels.
-    
+
     Returns:
         purity (float): The purity score.
     """
 
-    contingency = contingency_matrix(y_true, y_pred) # Compute contingency matrix
-    cluster_purities = np.sum(np.max(contingency, axis=0)) # Sum of the maximum values in each cluster (cluster purity)
-    total_samples = np.sum(contingency) # Total number of samples
-    purity = cluster_purities / total_samples # Compute purity score
+    contingency = contingency_matrix(y_true, y_pred) # compute contingency matrix
+    cluster_purities = np.sum(np.max(contingency, axis=0)) # sum of the maximum values in each cluster (cluster purity)
+    total_samples = np.sum(contingency) # total number of samples
+    purity = cluster_purities / total_samples # compute purity score
     return purity
 
 
@@ -99,7 +87,7 @@ def clust_metrics(df, y_predict):
     Args:
         df (DataFrame): A Pandas DataFrame representing the TF-IDF values.
         y_predict (List): The predicted labels.
-    
+
     Returns:
         metrics (Dict): A dictionary containing the evaluation metrics.
     """
@@ -109,9 +97,9 @@ def clust_metrics(df, y_predict):
     df = add_labels(df) # add the true labels to the DataFrame
 
     # print evaluation metrics
-    metrics["Purity"] = purity_score(df['label'], y_predict) # compute purity score
+    metrics["Purity"] = purity_score(df['true_label'], y_predict) # compute purity score
     metrics["Silhouette Score"] = silhouette_score(df, y_predict) # evaluate clustering using silhouette score
-    metrics["Random Index"] = rand_score(df['label'], y_predict) # compute random index
+    metrics["Random Index"] = rand_score(df['true_label'], y_predict) # compute random index
     return metrics
 
 
@@ -122,9 +110,9 @@ def main():
     """
 
     if "n_clusters" not in st.session_state: # check if the number of clusters is in the session state
-        st.session_state["n_clusters"] = 8 # if not, set the default number of clusters to 8
+        st.session_state["n_clusters"] = 9 # if not, set the default number of clusters to 8
     if "iterr" not in st.session_state: # check if the range is in the session state
-        st.session_state["iterr"] = range(2, 12, 2) # if not, set the default range to 2, 12, 2
+        st.session_state["iterr"] = range(2, 12, 1) # if not, set the default range to 2, 12, 2
     if "sse" not in st.session_state: # check if the SSE is in the session state
         st.session_state["sse"] = [0.0, 0.0, 0.0, 0.0, 0.0] # if not, set the default SSE to 0.0, 0.0, 0.0, 0.0, 0.0
     if "top_k" not in st.session_state: # check if the top k is in the session state
@@ -134,23 +122,20 @@ def main():
     submit = st.button("Submit") # create a submit button
 
     df = extract_weights() # extract the TF-IDF weights
-    model, df, y_predict = model_train(df, int(n_clusters)) # train the model based on the number of clusters given by the user
+    model, df, y_predict, model_time = model_train(df, int(n_clusters)) # train the model based on the number of clusters given by the user
     metrics = clust_metrics(df, df['cluster']) # compute the evaluation metrics
 
     st.header("Metrics:") # create a header for the Metrics
     for key, value in metrics.items(): # loop through the metrics
         with st.container(): # create a container containing the metrics and their values
-            st.subheader(f"{key}:") 
-            st.write(f"{value}")
+            st.subheader(f"{key}:")
+            st.write(f"{round(value, 3) * 100}%")
+
+    st.subheader("Model Time:") # create a subheader for the Model Training Time
+    st.write(f"{round(model_time, 3)} sec") # display the model training time
 
     st.header("Elbow Chart:") # create a header for the Elbow Chart
     plot_cluster(df, int(n_clusters)) # plot the Elbow Chart
-
-    top_k = st.text_input("Enter the number of top keywords you want to see from each cluster:", st.session_state["top_k"]) # get the number of top keywords
-    submit = st.button("Submit the number") # create a submit button
-
-    st.header("Top Keywords:") # create a header for the Top Keywords
-    get_top_keywords(df, y_predict, extract_weights().columns, int(top_k)) # get the top keywords for each cluster based on the number of top keywords given by the user
 
 
 if __name__ == "__main__":

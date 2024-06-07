@@ -1,9 +1,9 @@
 import os
 import math as m
+import numpy as np
 import pandas as pd
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
-
 
 def get_stopwords():
     """
@@ -160,6 +160,22 @@ def preprocessing():
     return total_tokens
 
 
+def normalize_row(row):
+    '''
+    This function normalizes the vectors.
+
+    Args:
+        row (Series): A row vector representing TF-IDF scores of a document.
+
+    Returns:
+        row (Series): Normalized row vector.
+    '''
+    norm = np.linalg.norm(row)
+    if norm == 0:
+        return row
+    return row / norm
+
+
 def calculate_TFIDF(TF, IDF):
     '''
     This function calculates the TF-IDF weights for the terms.
@@ -180,8 +196,11 @@ def calculate_TFIDF(TF, IDF):
             vectors.loc[term] = TF.loc[term] * IDF.loc[0, term]
 
     vectors = vectors.transpose() # transpose the DataFrame to get the terms as rows and documents as columns
+
+    vectors_normalized = vectors.apply(normalize_row, axis=1)
+
     print("TF-IDF Weights calculated")
-    return vectors
+    return vectors_normalized
 
 
 def save_weights():
