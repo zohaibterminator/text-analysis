@@ -13,7 +13,6 @@ def extract_weights():
 
     Returns:
         TF-IDF (DataFrame): The extracted TF-IDF weights.
-        IDF (DataFrame): The extracted IDF weights.
     """
 
     TF_IDF = pd.read_csv('tf-idf.csv', index_col=0)  # read TF-IDF DataFrame from CSV
@@ -47,7 +46,6 @@ def add_labels(tf_idf):
             labels.append(5)
 
     tf_idf['true_label'] = labels
-    tf_idf.to_csv('labelled.csv') # save the DataFrame to a CSV file
 
     return tf_idf
 
@@ -58,9 +56,6 @@ def model_train(tf_idf, n_neighbors=6):
 
     Args:
         tf_idf (DataFrame): The TF-IDF DataFrame.
-
-    Returns:
-        None
     """
 
     # split the data into training and testing sets

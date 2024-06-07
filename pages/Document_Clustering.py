@@ -13,7 +13,6 @@ pio.templates.default = 'ggplot2'
 
 def plot_cluster(df, k):
     """
-
     This function is used to plot values of SSE with respect to the Number of Clusters.
 
     """
